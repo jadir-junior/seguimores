@@ -1,16 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
-const { Header } = require('@nestjs/common');
+import { Controller, Get, Param } from '@nestjs/common';
 
-@Controller()
+import { InstagramService } from './instagram/instagram.service';
+
+@Controller('insta')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly instaService: InstagramService) {}
 
-  @Get()
-  @Header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36')
-  //Esse header sobrescreve a variável User-Agent no header, dizendo pro servidor que estamos tentando raspar, que somos um navegador ok!
-  //curl -I http://localhost:3000
-  async getHello(): Promise<any> {
-    return await this.appService.getHello();
+  @Get(':user')
+  async getUserInstagram(@Param() param: any): Promise<any> {
+    return await this.instaService.getUserInstagram(param.user);
   }
 }
