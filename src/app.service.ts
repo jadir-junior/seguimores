@@ -1,31 +1,38 @@
-import * as cheerio from 'cheerio'; //
-import * as rp from 'request-promise'; ///
-
 import { Injectable } from '@nestjs/common';
-import fs from 'fs';
-import puppeteer from 'puppeteer'; //
+import axios from 'axios';
 
-// npm run start:dev
-// porta 3000
-
+export interface UserInstagram {
+  biography: string;
+  name: string;
+  followed: number;
+  follow: number;
+  picture: string;
+  username: string;
+  photos: number;
+}
 
 @Injectable()
 export class AppService {
-  url: 'https://www.instagram.com/petry.exe';
-  url2: 'https://en.wikipedia.org/wiki/List_of_presidents_of_the_United_States';
+  async getUserInstagram(username: string): Promise<UserInstagram> {
+    const headers = {
+      'x-ig-app-id': '936619743392459'
+    };
 
-  async getHello(): Promise<string> {
-    // return 'Hello World!';
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+    const response = await axios.get(
+      `https://i.instagram.com/api/v1/users/web_profile_info/?username=${username}`,
+      { headers: headers }
+    );
+    const data = response.data;
+    const user = data.data.user;
 
-    await page.goto(this.url2);
-    const pageContent = await page.content();
-
-    // fs.writeFileSync('instagram.html', pageContent);
-
-    await browser.close();
-
-    return 'success';
+    return {
+      biography: user.biography,
+      name: user.full_name,
+      followed: user.edge_followed_by.count,
+      follow: user.edge_follow.count,
+      picture: user.profile_pic_url_hd,
+      username: user.username,
+      photos: user.edge_owner_to_timeline_media.count
+    };
   }
 }
