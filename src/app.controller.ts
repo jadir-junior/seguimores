@@ -1,13 +1,13 @@
 import { Controller, Get, Param } from '@nestjs/common';
 
-import { AppService } from './app.service';
+import { InstagramService } from './instagram/instagram.service';
 
 @Controller('insta')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly instaService: InstagramService) {}
 
   @Get(':user')
   async getUserInstagram(@Param() param: any): Promise<any> {
-    return await this.appService.getUserInstagram(param.user);
+    return await this.instaService.getUserInstagram(param.user);
   }
 }
